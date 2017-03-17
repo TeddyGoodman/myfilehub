@@ -5,3 +5,12 @@ Decrypt:
 openssl enc -aes-256-cbc -d -in () -out () -k (ps)
 
 
+for file in $(ls $dir)
+do
+    [ -f $file ] && echo "$file is File"
+    [ -d $file ] && echo "$file is Directory"
+done
+
+
+
+openssl enc -aes-256-cbc -d -in () -out () -k (ps)
