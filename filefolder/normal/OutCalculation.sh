@@ -68,7 +68,9 @@ while [[ -n $currentLineString ]]; do
 		
 			for i in "F" "E" "S" "T" "H" "M" ; do
 
-				currentSetNumber=$(echo $currentLineString | awk -F "${i}" '{gsub(" ","'${i}'"); print '"\$${currentSet}"'}' )
+				# currentSetNumber=$(echo $currentLineString | awk -F "${i}" '{gsub(" ","'${i}'"); print '"\$${currentSet}"'}' )
+
+				currentSetNumber=$(echo $currentLineString | awk -v curset="$currentSet" -F "${i}" '{gsub(" ","'${i}'"); print $curset}' )
 
 				checkedSetNumber=$currentSetNumber
 
