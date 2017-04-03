@@ -70,7 +70,7 @@ while [[ -n $currentLineString ]]; do
 
 				# currentSetNumber=$(echo $currentLineString | awk -F "${i}" '{gsub(" ","'${i}'"); print '"\$${currentSet}"'}' )
 
-				currentSetNumber=$(echo $currentLineString | awk -v curset="$currentSet" -F "${i}" '{gsub(" ","'${i}'"); print $curset}' )
+				currentSetNumber=$(echo $currentLineString | awk -v curset="$currentSet" -F "${i}" '{gsub(" ","'${i}'"); print $curset}')
 
 				checkedSetNumber=$currentSetNumber
 
