@@ -2,6 +2,8 @@
 
 inputFile=$1
 
+exitCheckString="6"
+
 currentLineString="currentline"
 currentLineNumber="1"
 increaseNumber="1"
@@ -49,10 +51,22 @@ isVariableFloat() {
 	fi
 }
 
+isVariableInteger() {
+
+	local input="$1"
+
+	if [[ $1 =~ ^[0-9]+$ ]]
+	then
+    	echo $1
+	else
+    	echo ""
+	fi
+}
+
 OutDefinitionArray=( "F" "E" "S" "T" "H" "M" )
 
 
-while [[ -n $currentLineString ]]; do
+while [[ $exitCheckString != "0" ]]; do
 
 	currentLineString=`awk "NR==$currentLineNumber {print; exit}" $inputFile`
 
@@ -66,28 +80,44 @@ while [[ -n $currentLineString ]]; do
 		currentSet="2"
 		while [[ -n $currentSet ]]; do
 		
-			for i in "F" "E" "S" "T" "H" "M" ; do
+			for i in 'F' 'E' 'S' 'T' 'H' 'M' ; do
 
-				# currentSetNumber=$(echo $currentLineString | awk -F "${i}" '{gsub(" ","'${i}'"); print '"\$${currentSet}"'}' )
+				#currentSetNumber=$(echo $currentLineString | awk -F "${i}" '{gsub(" ","'${i}'"); print '"\$${currentSet}"'}' )
 
 				currentSetNumber=$(echo $currentLineString | awk -v curset="$currentSet" -F "${i}" '{gsub(" ","'${i}'"); print $curset}')
 
 				checkedSetNumber=$currentSetNumber
 
-				for j in "F" "E" "S" "T" "H" "M" ; do
+				echo "IN  $checkedSetNumber"
+
+				for j in 'F' 'E' 'S' 'T' 'H' 'M' ; do
 
 					checkedSetNumberTemp=`contains $currentSetNumber $j`
+
+					echo "out1 :$checkedSetNumberTemp"
+
 
 					if [[ -z $checkedSetNumberTemp ]]; then
 						checkedSetNumber=""
 					fi
 
+					echo "out2 :$checkedSetNumber"
+
 				done
 
 				if [[ -n $checkedSetNumber ]]; then
 				
-					checkedSetNumber=`isVariableFloat $checkedSetNumber`
+					checkedSetNumberFloat=`isVariableFloat $checkedSetNumber`
+
+					checkedSetNumberInteger=`isVariableInteger $checkedSetNumber`
+
+					if [[ -z $checkedSetNumberFloat && -z $checkedSetNumberInteger ]]; then
+
+						checkedSetNumber=""
+					fi
 				fi
+
+				echo "out3 :$checkedSetNumber"
 
 
 				if [[ -n $checkedSetNumber ]]; then
@@ -117,11 +147,22 @@ while [[ -n $currentLineString ]]; do
 
 		done
 
-
 		echo "Temp :$resultNumber"
 
-		currentLineNumber="`expr $currentLineNumber + $increaseNumber`"
+	else
+
+		exitCheckString="`expr $exitCheckString - $increaseNumber`"
+
+		if [[ $exitCheckString == "0" ]]; then
+			echo "Result >>> $resultNumber"
+
+			exit 0
+		fi
+
 	fi
+
+
+	currentLineNumber="`expr $currentLineNumber + $increaseNumber`"
 
 done
 
